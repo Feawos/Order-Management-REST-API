@@ -8,13 +8,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class OrderMapper {
 
-    public Order toEntity(OrderRequestDTO dto) {
-        return new Order(
-                dto.orderDate(),
-                dto.totalAmount()
-        );
-    }
-
     public OrderResponseDTO toResponse(Order order) {
         return new OrderResponseDTO(
                 order.getId(),

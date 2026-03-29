@@ -13,13 +13,11 @@ public interface OrderService {
 
     OrderResponseDTO createOrder(Long customerId, OrderRequestDTO dto);
 
-    OrderResponseDTO updateOrder(
-            Long customerId,
-            Long orderId,
-            OrderUpdateDTO dto
-    );
+    OrderResponseDTO getOrderById(Long customerId, Long orderId);
 
     Page<OrderResponseDTO> getOrdersForCustomer(Long customerId, Pageable pageable);
+
+    OrderResponseDTO updateOrder(Long customerId, Long orderId, OrderUpdateDTO dto);
 
     void deleteOrder(Long customerId, Long orderId);
 

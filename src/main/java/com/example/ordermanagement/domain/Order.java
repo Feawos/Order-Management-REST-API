@@ -19,26 +19,35 @@ public class Order {
     private BigDecimal totalAmount;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "customer_id")
+    @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
     protected Order() {}
 
-    public Order(LocalDate orderDate, BigDecimal totalAmount) {
-        this.orderDate = orderDate;
-        this.totalAmount = totalAmount;
-    }
+//    public Order(LocalDate orderDate, BigDecimal totalAmount) {
+//        this.orderDate = orderDate;
+//        this.totalAmount = totalAmount;
+//    }
+//
+//    public void assignCustomer(Customer customer) {
+//        this.customer = customer;
+//    }
+//
+//    public void setOrderDate(LocalDate orderDate) {
+//        this.orderDate = orderDate;
+//    }
+//
+//    public void setTotalAmount(BigDecimal totalAmount) {
+//        this.totalAmount = totalAmount;
+//    }
 
-    public void assignCustomer(Customer customer) {
-        this.customer = customer;
-    }
-
-    public void setOrderDate(LocalDate orderDate) {
-        this.orderDate = orderDate;
-    }
-
-    public void setTotalAmount(BigDecimal totalAmount) {
-        this.totalAmount = totalAmount;
+    public static Order create(Customer customer, LocalDate date, BigDecimal amount) {
+        Order order = new Order();
+        order.customer = customer;
+        order.orderDate = date;
+        order.totalAmount = amount;
+        customer.getOrders().add(order);
+        return order;
     }
 
     // getters
@@ -56,5 +65,10 @@ public class Order {
 
     public Customer getCustomer() {
         return customer;
+    }
+
+    public void update(LocalDate date, BigDecimal amount) {
+        if (date != null) this.orderDate = date;
+        if (amount != null) this.totalAmount = amount;
     }
 }

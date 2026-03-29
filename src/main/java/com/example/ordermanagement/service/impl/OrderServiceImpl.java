@@ -42,12 +42,31 @@ public class OrderServiceImpl implements OrderService {
                         new ResourceNotFoundException("Customer not found with id: " + customerId)
                 );
 
-        Order order = mapper.toEntity(dto);
-        order.assignCustomer(customer);
+        Order order = Order.create(
+                customer,
+                dto.orderDate(),
+                dto.totalAmount()
+        );
 
-        Order saved = orderRepository.save(order);
+        return mapper.toResponse(orderRepository.save(order));
+    }
 
-        return mapper.toResponse(saved);
+    @Override
+    @Transactional(readOnly = true)
+    public OrderResponseDTO getOrderById(Long customerId, Long orderId) {
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Order not found with id: " + orderId)
+                );
+
+        if (!order.getCustomer().getId().equals(customerId)) {
+            throw new ResourceNotFoundException(
+                    "Order does not belong to customer id: " + customerId
+            );
+        }
+
+        return mapper.toResponse(order);
     }
 
     @Override
@@ -80,13 +99,7 @@ public class OrderServiceImpl implements OrderService {
             );
         }
 
-        if (dto.orderDate() != null) {
-            order.setOrderDate(dto.orderDate());
-        }
-
-        if (dto.totalAmount() != null) {
-            order.setTotalAmount(dto.totalAmount());
-        }
+        order.update(dto.orderDate(), dto.totalAmount());
 
         return mapper.toResponse(order);
     }
