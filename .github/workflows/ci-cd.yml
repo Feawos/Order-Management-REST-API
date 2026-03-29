@@ -30,6 +30,7 @@ jobs:
         run: >
           mvn sonar:sonar
           -Dsonar.projectKey=ordermanagement
+          -Dsonar.organization=feawos
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.login=${{ secrets.SONAR_TOKEN }}
           -Dsonar.qualitygate.wait=true
