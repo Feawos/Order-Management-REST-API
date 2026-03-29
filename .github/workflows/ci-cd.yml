@@ -27,10 +27,11 @@ jobs:
         run: mvn clean verify -Dspring.profiles.active=test
 
       - name: Sonar Scan
-        run: mvn sonar:sonar \
-          -Dsonar.projectKey=your_project \
-          -Dsonar.host.url=https://sonarcloud.io \
-          -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+        run: >
+          mvn sonar:sonar
+          -Dsonar.projectKey=ordermanagement
+          -Dsonar.host.url=https://sonarcloud.io
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
           -Dsonar.qualitygate.wait=true
 
       - name: Upload JAR
