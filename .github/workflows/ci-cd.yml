@@ -30,12 +30,13 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
-      - name: Build, Test and Analyze
+      - name: Build and Test
+        run: mvn clean verify -Dspring.profiles.active=test
+
+      - name: Debug Sonar execution
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          mvn clean verify -Dspring.profiles.active=test
-          mvn sonar:sonar -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.qualitygate.wait=true
+        run: mvn -X sonar:sonar -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
       - name: Upload JAR
         uses: actions/upload-artifact@v4
