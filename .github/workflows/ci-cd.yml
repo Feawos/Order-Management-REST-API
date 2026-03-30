@@ -29,7 +29,7 @@ jobs:
       - name: Sonar Scan
         run: >
           mvn sonar:sonar
-          -Dsonar.projectKey=Feawos_Order-Management-REST-API
+          -Dsonar.projectKey=feawos_Order-Management-REST-API
           -Dsonar.organization=feawos
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.login=${{ secrets.SONAR_TOKEN }}
