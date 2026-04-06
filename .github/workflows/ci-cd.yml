@@ -34,13 +34,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          echo "Testing SonarCloud API access..."
-          curl -s -u "$SONAR_TOKEN:" https://api.sonarcloud.io/api/organizations/search?organizations=feawos | head -20
-          echo ""
-          echo "Testing project access..."
-          curl -s -u "$SONAR_TOKEN:" https://api.sonarcloud.io/api/projects/search?organization=feawos | head -20
-          
+        run: |  
           mvn clean verify sonar:sonar \
             -Dspring.profiles.active=test \
             -Dsonar.projectKey=Feawos_Order-Management-REST-API \
