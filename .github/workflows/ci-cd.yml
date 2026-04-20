@@ -5,6 +5,10 @@ on:
     branches: [ "main", "develop" ]
   pull_request:
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
 
   build-test:
@@ -23,28 +27,26 @@ jobs:
           java-version: '21'
           cache: maven
 
+      - name: Build and test
+        run: ./mvnw -B clean verify -Dspring.profiles.active=test
+
       - name: Cache Sonar packages
+        if: ${{ secrets.SONAR_TOKEN != '' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
         uses: actions/cache@v4
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
-      - name: Build, Test and Analyze
-        uses: sonarsource/sonarqube-scan-action@master
-        with:
-          projectBaseDir: .
-          args: >
-            -Dsonar.organization=feawos
-            -Dsonar.projectKey=Feawos_Order-Management-REST-API
-            -Dsonar.java.binaries=**/target/classes
+
+      - name: SonarQube Cloud analysis
+        if: ${{ secrets.SONAR_TOKEN != '' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |  
-          mvn clean verify sonar:sonar \
-            -Dspring.profiles.active=test \
-            -Dsonar.qualitygate.wait=true
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: >
+          ./mvnw -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+          -Dspring.profiles.active=test
+          -Dsonar.qualitygate.wait=true
 
       - name: Upload JAR
         uses: actions/upload-artifact@v4
