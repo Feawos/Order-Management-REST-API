@@ -30,7 +30,7 @@ jobs:
           cache: maven
 
       - name: Build and test
-        run: ./mvnw -B clean verify -Dspring.profiles.active=test
+        run: mvn -B clean verify -Dspring.profiles.active=test
 
       - name: Cache Sonar packages
         if: ${{ env.SONAR_TOKEN != '' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
@@ -45,7 +45,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >
-          ./mvnw -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+          mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
           -Dspring.profiles.active=test
           -Dsonar.qualitygate.wait=true
 
