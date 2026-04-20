@@ -13,6 +13,8 @@ jobs:
 
   build-test:
     runs-on: ubuntu-latest
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
     steps:
       - name: Checkout code
@@ -31,7 +33,7 @@ jobs:
         run: ./mvnw -B clean verify -Dspring.profiles.active=test
 
       - name: Cache Sonar packages
-        if: ${{ secrets.SONAR_TOKEN != '' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
+        if: ${{ env.SONAR_TOKEN != '' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
         uses: actions/cache@v4
         with:
           path: ~/.sonar/cache
@@ -39,10 +41,9 @@ jobs:
           restore-keys: ${{ runner.os }}-sonar
 
       - name: SonarQube Cloud analysis
-        if: ${{ secrets.SONAR_TOKEN != '' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
+        if: ${{ env.SONAR_TOKEN != '' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: >
           ./mvnw -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
           -Dspring.profiles.active=test
